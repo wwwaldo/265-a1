@@ -194,9 +194,9 @@ $\proc{Union}(H_1,H_2)$ must return a pointer to the root of an $\proc{R-Heap}$ 
 
 % base cases
 
-\li \If $(r_1 = \func{NIL})$ \Then
+\li \If $(r_1 == \func{NIL})$ \Then
 \li 	\Return $r_2$
-\li \ElseIf $(r_2 = \func{NIL})$ \Then
+\li \ElseIf $(r_2 == \func{NIL})$ \Then
 \li 	\Return $r_1$
 \li \Else
 
@@ -204,26 +204,36 @@ $\proc{Union}(H_1,H_2)$ must return a pointer to the root of an $\proc{R-Heap}$ 
 
 \li	\If $(r_1.value	< r_2.value)$ \Then
 \li		$\func{small} \gets r_1 $
-\li		$\func{big} \gets r_2$
+\li		$\func{large} \gets r_2$
 \li	\Else
 \li		$\func{small} \gets r_2 $
-\li		$\func{big} \gets r_1$
+\li		$\func{large} \gets r_1$
 		\End
 		
 % merge left child of main tree 
 		
-\li	$\func{new\_child} \gets \proc{Union}(\func{small.left}, \func{biggest})$
+\li	$\func{new\_child} \gets \proc{Union}(\func{small.left}, \func{large})$
 
+% fixing parent
 
-% link parent while ensuring R-balance is preserved
-\li \If small.right = NIL or small.right.d < small.left.d
-\li small.left = small.right
-\li $small.right = \func{new\_child}$
+\li $\func{new\_child.parent} \gets \func{small}$
+
+% recalculating d values
+\li \If $\func{new\_child.left}$ and $\func{new\_child.right}$ \Then
+\li $\func{new\_child.d} \gets {1+min\{new\_child.left.d, new\_child.right.d\}}$
+\li \Else 
+\li     ${new\_child.d = 1}$
+        \End
+
+% R-balance is preserved
+\li \If $small.right == NIL$ or $small.right.d < small.left.d$   \Then
+\li     small.left = small.right
+\li     $small.right = \func{new\_child}$
 \li \Else
-\li small.left = $\func{new\_child}$
+\li     small.left = $\func{new\_child}$
+        \End
 
-
-\li 	\Return $\func{smallest}$
+\li 	\Return $\func{small}$
 	\End
 \end{codebox}
 
