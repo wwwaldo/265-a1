@@ -132,7 +132,7 @@ Add is simple to implement. The $i$th leaf of the tree is given by index $2^k + 
 \End
 \end{codebox}
 
-The resultant tree has an updated leaf and satisfies the sum property specified in $\proc{Init}$. This is because only the parents of the leaf specified by $i$ will have their values affected.
+The resultant tree has an updated leaf and satisfies the sum property specified in Q1(a). This is because only the parents of the leaf specified by $i$ will have their values affected.
 
 $\proc{Add}(i,t)$ runs in $\func{O}(\log(n))$. One iteration of the while loop is executed for each level of the tree, so the algorithm is proportional to the tree height. This in turn is proportional to the log of the number of nodes in the tree, which is proportional to the number of leaves. \\
 
@@ -140,16 +140,34 @@ We may reach the same conclusion by noticing that $\func{node\_index}$ is propor
 \\
 
 $\proc{Sum}(i)$:
-Notice that for any node $N$ at depth $h$ of the tree, there are $2^{n-h}$ descendants of $N$ which are leaves. We can show by induction that the value contained in $N$ is equal to the sum of its leaf descendants. This is key to our algorithm. We start by initializing a running sum variable, $x$, at zero. Then we traverse the tree downwards from the root, choosing at each depth $h$ at most one node $N$. We add the value of $N$ to our running sum $x$. Our choice of $N$ is based on the value of $i$, so that
+Notice that for any node $N$ at depth $h$ of the tree, there are $2^{n-h}$ descendants of $N$ which are leaves. By induction, the value of $N$ is equal to the sum of its leaf descendants. 
 
-\begin{enumerate}
-\item No value $a_j$ ($1 \leq j \leq n$) is added more than once
-\item The algorithm terminates once $x$ contains the sum $a_1, \ldots, a_i$
-\end{enumerate}
+This is key to our algorithm, because we can decompose the sum $\sum_{j=1}^{i}a_j$ into a sum of groups of powers of two. This binary representation of $i$ is unique.
 
-Since we can represent $i$ uniquely in binary, we can decompose it into a unique sum of these "power of two" nodes. Since the algorithm chooses and adds only a single node at each depth $h$ of a tree, it runs in $\func{O}(\log(n))$ time.
+For example, if $i=7$, we may write $\sum_{j=1}^{i}a_j$ as $\sum_{j=1}^{2^2}a_j +\sum_{j=2^2 + 1}^{2^2 + 2^1}a_j + \sum_{j=2^2 + 2^1 + 1}^{2^2 + 2^1 + 2^0}a_j$. This first sum is a group of 4, the second a group of 2, and the third a group of 1. This corresponds to adding certain nodes on each level of the binary tree.
 
-An example of the algorithm is illustrated with $i = 7, n = 8$. Our pseudocode is less intuitive, because it uses the array-index implementation of a complete binary tree (given in CLRS 6.1). The first index in the array is 1. 
+\begin{codebox}
+\Procname{$\proc{Sum}(i)$}
+\li $d \gets 1$
+\li $b \gets i$
+\li $c \gets n$
+\li $x \gets 0$
+\li \While $b > 0$ \Do
+\li		\If $(\lfloor b / c \rfloor = 1)$ \Then
+\li 		$b \gets b - c$
+\li			$x \gets x + \func{value}(d)$
+\li 		$d = 2d + 2$
+\li		\Else
+\li			$d = 2d$	
+		\End
+\li	$c \gets \lfloor c / 2 \rfloor$ 		
+	\End
+\li \Return $x$
+\end{codebox}
+
+Note $\func{value}(d)$ is a function which returns the value of the node with index $d$. The pseudocode is difficult to parse, so we also illustrate the procedure graphically below. 
+
+Only a maximum of one node is added at each level of the tree, so the procedure runs in time proportional to the tree height -- $\func{O}(\log(n))$.
 
 \begin{minipage}[t]{\linewidth}
                 \centering
@@ -162,7 +180,7 @@ level 2/.style={sibling distance=17mm},
 level 3/.style={sibling distance=7mm}
 ]
 
-\node (root) {28} 
+\node[blue] (root) {28} 
 child {node {10} 
 	child {node {3} 
 		child {node {1}} 
@@ -199,15 +217,15 @@ level 2/.style={sibling distance=17mm},
 level 3/.style={sibling distance=7mm}
 ]
 
-\node (root) {28} 
+\node[blue] (root) {28} 
 child {node[red] (hey) {10} 
 	child {node {3} 
-		child {node[red] {1}} 
-		child {node[red] {2}}
+		child {node {1}} 
+		child {node {2}}
 	}
 	child {node {7} 
-		child {node[red] {3}} 
-		child {node[red] {4}}
+		child {node {3}} 
+		child {node {4}}
 	} 
 }
 child {node {18}
@@ -236,21 +254,21 @@ level 2/.style={sibling distance=17mm},
 level 3/.style={sibling distance=7mm}
 ]
 
-\node (root) {28} 
+\node[blue] (root) {28} 
 child {node[red] (hey) {10} 
 	child {node {3} 
-		child {node[red] {1}} 
-		child {node[red] {2}}
+		child {node {1}} 
+		child {node {2}}
 	}
 	child {node {7} 
-		child {node[red] {3}} 
-		child {node[red] {4}}
+		child {node {3}} 
+		child {node {4}}
 	} 
 }
 child {node {18}
  	child {node[red] (hey2) {11} 
- 		child {node[red] {5}} 
- 		child {node[red] {6}}
+ 		child {node {5}} 
+ 		child {node {6}}
  	}
  	child {node {7}
 		child {node {7}}
@@ -273,21 +291,21 @@ level 2/.style={sibling distance=17mm},
 level 3/.style={sibling distance=7mm}
 ]
 
-\node (root) {28} 
+\node[blue] (root) {28} 
 child {node[red] (hey) {10} 
 	child {node {3} 
-		child {node[red] {1}} 
-		child {node[red] {2}}
+		child {node {1}} 
+		child {node {2}}
 	}
 	child {node {7} 
-		child {node[red] {3}} 
-		child {node[red] {4}}
+		child {node {3}} 
+		child {node {4}}
 	} 
 }
 child {node {18}
  	child {node[red] (hey2) {11} 
- 		child {node[red] {5}} 
- 		child {node[red] {6}}
+ 		child {node {5}} 
+ 		child {node {6}}
  	}
  	child {node {7}
 		child {node[red] (hey3) {7}}
@@ -298,32 +316,12 @@ child {node {18}
 \draw[->] (invisi) -- (hey3);
 \end{tikzpicture}
 
-
+\captionof{figure}{Procedure $\proc{Sum}(i)$ on the tree in Q1(a) with $i=7$. The procedure begins at the root of top of the tree. The arrow represents the node being considered. If the node is red, it is added to the running sum $x$. If it is blue, it has been visited but has not been added. }
 
 \end{minipage}
 
-In the pseudocode, $i \func{div} c \gets \lfloor i / c \rfloor$ and $i \bmod c$ is the usual modulus function. $\func{value}(d)$ is a function which returns the value of the node with index $d$.
 
 
-
-\begin{codebox}
-\Procname{$\proc{Sum}(i)$}
-\li $d \gets 1$
-\li $b \gets i$
-\li $c \gets n$
-\li $x \gets 0$
-\li \While $b > 0$ \Do
-\li		\If $(\lfloor b / c \rfloor = 1)$ \Then
-\li 		$b \gets b - c$
-\li			$x \gets x + \func{value}(d)$
-\li 		$d = 2d + 2$
-\li		\Else
-\li			$d = 2d$	
-		\End
-\li	$c \gets \lfloor c / 2 \rfloor$ 		
-	\End
-\li \Return $x$
-\end{codebox}
 
 Proof of correctness.
 The following lemma essentially states that the value held by a node is equal to the sum of the values of its leaf descendants.
@@ -357,26 +355,121 @@ By construction, $\func{N.value} = \func{N.left.value} + \func{N.right.value}$. 
 \sum_{j = (2^{k-h})\mathit{l} + 2^{k-h} + 1}^{(2^{k-h}) \mathit{l} + 2^{k-h}}a_j \\
 = \sum_{j = (2^{k-h})\mathit{l} + 1}^{(2^{k-h})\mathit{l} + 2^{k-h}}a_j
 \end{gather*}
-So the lemma holds. (Whew!)
+So the lemma holds. Whew!
 \end{proof}
 
-We now list and prove a few loop invariants. Let $k$ be the height of the tree and denote by $b_p, c_p, x_p$ the values of the variables $b,c,x$ after the $p$th iteration of the while loop at line 4. If $i = \sum_{j = 1}^{h}\phi_j 2^j$, then we have
 
-\begin{align*}
-b_p &= \sum_{j = p + 1}^{k}\phi_j 2^j \\
-c_p &=  2^{k-p} \\
-x_p &= \sum_{j=1}^{b_p}a_j .
-\end{align*}
+Termination. To prove 
+
+\begin{proposition}
+Write $i$ as $\sum_{j = 1}^{k}\phi_j 2^j$. Then the while loop in $\proc{Sum}(i)$ terminates, and does so after the $(k-h)$th iteration, where $h = \{\min(j) | \phi_j = 1\}$. 
+\end{proposition}
 
 \begin{proof}
-$c_p$: This is easy. $c_0 = n = 2^k$, so the base case holds. Inductively, we have $c_p = c_{p-1} / 2$ = $2^{k-(p-1)} \div 2 = 2^{n-p}$.
-$b_p$: Before the start of the first iteration, $b = b_0 = i$, so the loop invariant holds. Assume that the loop invariant holds on the $p-1$th iteration. There are two cases. If $\lfloor b/c \rfloor = 1$ then $b_p = b_{p-1} - c_{p-1} =  \sum_{j = p}^{k}\phi_j 2^j - 2^{k-(p-1)} = \sum_{j = p - 1}^{k}\phi_j 2^j$. 
+Denote by $b_p, c_p$ the values of the variables $b,c$ after the $p$th iteration of the while loop. We quickly prove two loop invariants:
+
+\begin{align*}
+b_p &=  \sum_{j = 1}^{k-p}\phi_j 2^j \\
+c_p &=  2^{k-p}
+\end{align*}
+
+$c_p$: $c_0 = n = 2^k$, so the base case holds. Inductively, we have $c_p = c_{p-1} / 2$ = $2^{k-(p-1)} \div 2 = 2^{n-p}$. \\
+
+$b_p$: Before the start of the first iteration, $b = b_0 = i$, so the loop invariant holds. 
+Assume that the loop invariant holds on the $p-1$th iteration. Then $b_{p-1} = \sum_{j = 1}^{k-(p-1)}\phi_j 2^j$. Notice that $c_{p-1} =  2^{k-(p-1)}$. So $\lfloor b/c \rfloor = 1$ iff $\phi_{k-(p-1)} = 1$. Then $b_p =\sum_{j = 1}^{k-p}\phi_j 2^j$ in either branch of the if/else block, so the loop invariant holds.
+
+In particular, $b_{k-h +1} = \sum_{j = 1}^{k-(k-h+1)}\phi_j 2^j$ = $\sum_{j = 1}^{h-1}\phi_j 2^j = 0$, by construction of $h$. So the loop quits after the $(k-h)$th iteration of the while loop, and the algorithm exits.
+ 
 \end{proof}
 
-\begin{lemma}
-After the $p$th iteration of the while loop on line 4, 
-\end{lemma}
+\begin{corollary} \label{runtime1}
+The worst case running time of $\proc{Sum}(i)$ is $\func{O}(\log(n))$.
+\end{corollary}
+\begin{proof}
+Choose $i = n - 1 = 2^k -1 = \sum{j=1}{k-1}2^j$. Then $h = 1$ and the while loop quits only after $k-1$ iterations. But $k \in \func{O}(\log(n))$.
+\end{proof}
 
+\begin{proposition}
+$\proc{Sum}(i)$ is partially correct; i.e. it returns $\sum_{j=1}^{i}a_j$.
+\end{proposition}
+
+\begin{proof}
+Again, we begin by proving some loop invariants. We have
+
+\begin{align*}
+\func{value}(d_p) = \sum_{j=\psi_{p-1} + 1}^{2^{k-h} + \psi_{p-1}}a_j \\
+x_p &= \sum_{j=1}^{\psi_{p-1}}a_j \\
+\texttt{where  } \psi_p &= \sum_{\alpha = k-p}^{k}\phi_{\alpha}2^{\alpha}
+\end{align*}
+
+$\func{value}(d_p)$. Base case: before the start of the loop, $\func{value}(d_0) = \sum_{j = 1}^{2^{k}}a_j$ by the lemma. We have $\psi_{-1} = 0$, so the theorem holds. 
+
+Inductive case: Suppose the loop invariant holds for $\func{value}(d_{p-1})$. 
+
+Now $d_{p-1} = 2^{k-(p-1)}+ \mathit{l}$ for some $\mathit{l} , 1 \leq \mathit{l} \leq 2^{k-(p-1)}$. By the induction hypothesis, we can equate the lower bounds on the summations in the lemma and loop invariant. This allows us to solve for $\mathit{l}$:
+
+\begin{align*}
+2^{k-(p-1)}\mathit{l} + 1 = \psi_{p-2} + 1 \\
+2^{k-(p-1)}\mathit{l} + 1 = \sum_{j=k-(p-2)}^{k}a_j + 1 \\
+\mathit{l}= \frac{\sum_{j=k-(p-2)}^{k}a_j}{2^{k-(p-1)}} \\
+\mathit{l}= \sum_{j=1)}^{p-1}a_j \\
+\end{align*}
+
+Then there are two cases.
+
+\textit{Case 1} $\lfloor b_{p-1}/c_{p-1} \rfloor = 1$. Notice $\phi_{p-1} = 1$ and in particular $\psi_{p-1} = 2^{k-(p-1)} + \psi_{p-2}.$\\
+
+Write $d_p$ as $2^{k-p} + \mathit{l}'$. Now $d_p = 2d_{p-1} + 2$ so that $\mathit{l'} = 2\mathit{l} + 2$. Using the lemma, we have
+
+\begin{align*}
+\func{value}(d_p) = \sum_{j = (2^{k-p})\mathit{l'} + 1}^{(2^{k-p})\mathit{l'} + 2^{k-p}}a_j \\
+\end{align*}
+
+The lower bound resolves to 
+
+\begin{align*}
+(2^{k-p})\mathit{l'} + 1 \\
+= (2^{k-p})(2\mathit{l} + 2) + 1 \\
+= (2^{k-p})(2 \sum_{j=1)}^{p-1}a_j + 2) + 1 \\
+= \sum_{j=k-(p-2)}^{k}a_j + 2^{k-(p-1)} + 1 \\
+= \psi_{p-2} + 2^{k-(p-1)} + 1 \\
+= \psi_{p-1} + 1
+\end{align*}
+
+Similarly, the upper bound resolves to $2^{k-p} + \psi_{p-1}$.\\
+
+\textit{Case 2} $\lfloor b_{p-1}/c_{p-1} \rfloor = 0$. Then $\phi_{p-1} = 0$ so that $\psi_{p-1} = \psi_{p-2}.$ Also, we have $d_p = 2d_{p-1}$ so that $\mathit{l'} = 2\mathit{l}$. Following the same sequence of calculations as in case 1, we see that the loop invariant holds.
+
+$x_p$:
+
+Base case: Since $\psi_0 = 0$ we have $\sum_{j=1}^{0}a_j = 0 = x_0$, as desired.
+
+Assume that the loop invariant holds before the $(p-1)$th iteration. We show it holds before the $p$th iteration.
+
+Consider $x_{p-1} = \sum_{j=1}^{\psi_{p-1}}a_j$ .
+
+\textit{Case 1.} If $\lfloor b_{p-1} / c_{p-1} \rfloor = 1$ then 
+
+\begin{align*}
+x_p = x_{p-1} + \func{value}(d_{p-1}) \\
+= \sum_{j=1}^{\psi_{p-2}}a_j 
++ \sum_{j=\psi_{p-2} + 1}^{2^{k-h} + \psi_{p-2}}a_j \\
+= \sum_{j=1}^{2^{k-h} + \psi_{p-2}}a_j \\
+= \sum_{j=1}^{\psi_{p-1}}a_j \\
+\end{align*}
+The second step uses the inductive hypothesis. The last step uses the fact that $\phi_{p-1} = 1$ in this case.
+
+\textit{Case 2.} If $\lfloor b_{p-1} / c_{p-1} \rfloor = 0$ then $\phi_{p-1} = 1$ so that $\psi_{p-1} = \psi_{p-2}$. Then $x_p = x_{p-1} = \sum_{j=1}^{\psi_{p-2}}a_j = \sum_{j=1}^{\psi_{p-1}}a_j$, so the loop invariant holds.
+
+Now let's consider the value of $x$ when the loop terminates. We showed that this occurs before the $(k-h+1)$th iteration. Then $psi_{k-h} = \sum_{\alpha = k-(k-h)}^{k}\phi_{\alpha} = \sum_{\alpha = h}^{k}\phi_{\alpha} = \sum_{\alpha = 1}^{k}\phi_{\alpha}2^{\alpha} = i$ (the last step follows from construction of $h$). But this means $x_{k-h+1} = \sum_{j=1}^{\psi_{(k-h+1)-1}}a_j = \sum_{j=1}^{i}a_j$. So $\proc{Sum}(i)$ is partially correct.
+ 
+\end{proof}
+
+The total correctness of $\proc{Sum}(i)$ follows.
+
+\begin{theorem}
+$\proc{Sum}(i)$ is correct.
+\end{theorem}
 
 \end{solution}
 
@@ -386,7 +479,9 @@ After the $p$th iteration of the while loop on line 4,
 \part For each $n = 2^k$, and each setting of $a_1, \ldots, a_n$, give an input $i$, $1 \leq i \leq n$, such that your implementation of $\proc{Sum}(i)$ runs in time $\Omega(\log(n))$. Explain clearly and precisely why the running time is $\Omega(\log(n))$ on this input.
 
 \begin{solution}
-Choose $i = 2^k - 1$. Intuitively, since the binary representation of $i$ is a string of 1s of length $k$, the $\proc{Sum}(i)$ algorithm will need to pick one node from each level of the tree, resulting in a run-time of $\func{O}(k) = \func{\Omega}(\log(n))$.
+Choose $i = 2^k - 1$. Refer to Corollary \ref{runtime1} for a detailed explanation why the run time is $\Omega(\log(n))$ on this input.
+
+Notice that our implementation would (oddly enough) also be $\Omega(\log(n))$ for $i=1$. To be precise, it is $\Omega(\log(n))$ on all odd inputs.
 \end{solution}
 
 
