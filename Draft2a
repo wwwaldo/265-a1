@@ -1,0 +1,30 @@
+Proof 2a
+
+Let P(k) denote be the predicate:
+P(k): 	Upon the k-th return statement is executed, if the trees rooted at r1 and r2 are both R-Heaps or, possibly one of r1 and r2 is NIL, then, Union(r1, r2) terminates and, when it does, it returns the root of the R-Heap (possibly a subtree) that contains the union of the elements of the trees rooted at r1 and r2.
+
+Note that the function recurses until one of the parameter is NIL, which means that the first return statement executed must be in the call with one of the parameter "NIL" (or it would continues to recurse).
+
+Base case: If either r1 or r2 is NIL, by line 2 or line 4, the other parameter is returned (i.e. termination). Since all subtree of the R-Heap has the all the R-Heap property, the parameter returned should also be an R-Heap. 
+###"all subtree of the R-Heap has the all the R-Heap property" seems to be a precondition which is always true when dealing with R-Heap
+
+Since either of r1 or r2 is "NIL", and the other non-empty node is returned, the returned node must be the root of the tree which have all the element of r1 and r2.
+
+Thus, the returned node is the R-Heap that contains the union of the elements of the trees rooted at r1 and r2.
+
+
+Inductive steps:
+
+Assume P(i) holds for all integer i, we must prove that P(i+1) holds as well.
+
+(0) Termination (return)
+
+(i) Min-Heap Property:
+
+(ii) R-balance
+
+(iii) Contains union of elements
+
+(iv) Correctness of the returned node
+
+
