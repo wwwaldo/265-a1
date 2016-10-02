@@ -4,6 +4,9 @@
 \usepackage{amsmath,amsthm,verbatim,amssymb,amsfonts,amscd, graphicx}
 \usepackage{graphics}
 
+\usepackage{afterpage}
+\usepackage{caption}
+
 \usepackage{tikz}
 \usepackage{fancybox}
 
@@ -137,28 +140,242 @@ We may reach the same conclusion by noticing that $\func{node\_index}$ is propor
 \\
 
 $\proc{Sum}(i)$:
-We can implement $\proc{Sum}(i)$ by decomposing $i$ into its binary representation. Roughly speaking, the nodes at level $h$ of the tree hold values corresponding to sum of a group of $2^h$ elements of $(a_j)_{j=1}^{j=n}$. Then we can sum all of the elements $a_1, \ldots, a_i$ by travelling down the tree, and adding the value of at most one node from each level. We keep track of which powers of two we have already included, and which powers of two we still have left to include. When we have no more powers of two to include, the algorithm terminates, and the result is the sum $a_1, \ldots, a_i$.
+Notice that for any node $N$ at depth $h$ of the tree, there are $2^{n-h}$ descendants of $N$ which are leaves. We can show by induction that the value contained in $N$ is equal to the sum of its leaf descendants. This is key to our algorithm. We start by initializing a running sum variable, $x$, at zero. Then we traverse the tree downwards from the root, choosing at each depth $h$ at most one node $N$. We add the value of $N$ to our running sum $x$. Our choice of $N$ is based on the value of $i$, so that
 
-In the pseudocode below, $i \func{div} c \gets \lfloor i \div c \rfloor$ and $i\mod c$ is the usual modulus function.
+\begin{enumerate}
+\item No value $a_j$ ($1 \leq j \leq n$) is added more than once
+\item The algorithm terminates once $x$ contains the sum $a_1, \ldots, a_i$
+\end{enumerate}
 
-This algorithm is proportional to the height of the tree, and so it runs in $\func{O}(\log(n))$, as desired. 
+Since we can represent $i$ uniquely in binary, we can decompose it into a unique sum of these "power of two" nodes. Since the algorithm chooses and adds only a single node at each depth $h$ of a tree, it runs in $\func{O}(\log(n))$ time.
+
+An example of the algorithm is illustrated with $i = 7, n = 8$. Our pseudocode is less intuitive, because it uses the array-index implementation of a complete binary tree (given in CLRS 6.1). The first index in the array is 1. 
+
+\begin{minipage}[t]{\linewidth}
+                \centering
+\begin{tikzpicture}
+[ 
+level distance=9mm, 
+every node/.style={circle, draw, inner sep=1.5pt},
+level 1/.style={sibling distance=30mm}, 
+level 2/.style={sibling distance=17mm}, 
+level 3/.style={sibling distance=7mm}
+]
+
+\node (root) {28} 
+child {node {10} 
+	child {node {3} 
+		child {node {1}} 
+		child {node {2}}
+	}
+	child {node {7} 
+		child {node {3}} 
+		child {node {4}}
+	} 
+}
+child {node {18}
+ 	child {node {11} 
+ 		child {node {5}} 
+ 		child {node {6}}
+ 	}
+ 	child {node {7}
+		child {node {7}}
+		child {node {0}}
+	}
+};
+\coordinate[left of=root] (invisi);
+\draw[->] (invisi) -- (root);
+\end{tikzpicture}
+\end{minipage}
+
+\begin{minipage}[t]{\linewidth}
+                \centering
+\begin{tikzpicture}
+[ 
+level distance=9mm, 
+every node/.style={circle, draw, inner sep=1.5pt},
+level 1/.style={sibling distance=30mm}, 
+level 2/.style={sibling distance=17mm}, 
+level 3/.style={sibling distance=7mm}
+]
+
+\node (root) {28} 
+child {node[red] (hey) {10} 
+	child {node {3} 
+		child {node[red] {1}} 
+		child {node[red] {2}}
+	}
+	child {node {7} 
+		child {node[red] {3}} 
+		child {node[red] {4}}
+	} 
+}
+child {node {18}
+ 	child {node {11} 
+ 		child {node {5}} 
+ 		child {node {6}}
+ 	}
+ 	child {node {7}
+		child {node {7}}
+		child {node {0}}
+	}
+};
+\coordinate[left of=hey] (invisi);
+\draw[->] (invisi) -- (hey);
+\end{tikzpicture}
+\end{minipage}
+
+\begin{minipage}[t]{\linewidth}
+                \centering
+\begin{tikzpicture}
+[ 
+level distance=9mm, 
+every node/.style={circle, draw, inner sep=1.5pt},
+level 1/.style={sibling distance=30mm}, 
+level 2/.style={sibling distance=17mm}, 
+level 3/.style={sibling distance=7mm}
+]
+
+\node (root) {28} 
+child {node[red] (hey) {10} 
+	child {node {3} 
+		child {node[red] {1}} 
+		child {node[red] {2}}
+	}
+	child {node {7} 
+		child {node[red] {3}} 
+		child {node[red] {4}}
+	} 
+}
+child {node {18}
+ 	child {node[red] (hey2) {11} 
+ 		child {node[red] {5}} 
+ 		child {node[red] {6}}
+ 	}
+ 	child {node {7}
+		child {node {7}}
+		child {node {0}}
+	}
+};
+\coordinate[left of=hey2] (invisi);
+\draw[->] (invisi) -- (hey2);
+\end{tikzpicture}
+\end{minipage}
+
+\begin{minipage}[t]{\linewidth}
+                \centering
+\begin{tikzpicture}
+[ 
+level distance=9mm, 
+every node/.style={circle, draw, inner sep=1.5pt},
+level 1/.style={sibling distance=30mm}, 
+level 2/.style={sibling distance=17mm}, 
+level 3/.style={sibling distance=7mm}
+]
+
+\node (root) {28} 
+child {node[red] (hey) {10} 
+	child {node {3} 
+		child {node[red] {1}} 
+		child {node[red] {2}}
+	}
+	child {node {7} 
+		child {node[red] {3}} 
+		child {node[red] {4}}
+	} 
+}
+child {node {18}
+ 	child {node[red] (hey2) {11} 
+ 		child {node[red] {5}} 
+ 		child {node[red] {6}}
+ 	}
+ 	child {node {7}
+		child {node[red] (hey3) {7}}
+		child {node {0}}
+	}
+};
+\coordinate[left of=hey3] (invisi);
+\draw[->] (invisi) -- (hey3);
+\end{tikzpicture}
+
+
+
+\end{minipage}
+
+In the pseudocode, $i \func{div} c \gets \lfloor i / c \rfloor$ and $i \bmod c$ is the usual modulus function. $\func{value}(d)$ is a function which returns the value of the node with index $d$.
+
+
 
 \begin{codebox}
 \Procname{$\proc{Sum}(i)$}
-\li $\func{index} \gets 1$
+\li $d \gets 1$
+\li $b \gets i$
 \li $c \gets n$
 \li $x \gets 0$
-\li \While $i > 0$ \Do
-\li		\If $i \func{div} c = 1$ \Do
-\li 		$i \gets i - c$
-\li			$x \gets x + \func{index.value}$
-\li 		$\func{index} = 2\func{index} + 2$
-			\End
-\li		\Else \Do
-\li			$\func{undex} = 2\func{index}$
-			\End	
-\li		$c \gets \lfloor c / 2 \rfloor$ 
+\li \While $b > 0$ \Do
+\li		\If $(\lfloor b / c \rfloor = 1)$ \Then
+\li 		$b \gets b - c$
+\li			$x \gets x + \func{value}(d)$
+\li 		$d = 2d + 2$
+\li		\Else
+\li			$d = 2d$	
+		\End
+\li	$c \gets \lfloor c / 2 \rfloor$ 		
+	\End
+\li \Return $x$
 \end{codebox}
+
+Proof of correctness.
+The following lemma essentially states that the value held by a node is equal to the sum of the values of its leaf descendants.
+\begin{lemma}
+If the index of a node $N$ in an array-implementation of a $\proc{Sum}$ complete binary tree of height $k$ is $2^h + \mathit{l}$, then $\func{N.value}$ is \[\sum_{j = (2^{k-h})\mathit{l} + 1}^{(2^{k-h})\mathit{l} + 2^{k-h}}a_j.\]
+\end{lemma}
+\begin{proof}
+We fix the size of the tree, $k$, and proceed by induction \emph{up} the levels of the tree. 
+
+\emph{Base case:} $h = k$. Fix $\mathit{l}$. Then $N$ is a leaf and 
+
+\begin{gather*}
+\sum_{j = (2^{k-h})\mathit{l} + 1}^{(2^{k-h})\mathit{l} + 2^{k-h}}a_j 
+ = \sum_{j = \mathit{l} + 1}^{\mathit{l} + 1}a_j
+ = a_{l + 1} = \func{N.value}
+\end{gather*}
+
+So the base case holds. Note $\mathit{l} = 0$ for the first node at depth $h$ in the tree.
+
+\emph{Inductive Case:} Suppose that the lemma holds for all nodes at depth $h + 1$ of the tree. We show that it holds for nodes at depth $h$. Fix $\mathit{l}$.
+
+By construction, $\func{N.value} = \func{N.left.value} + \func{N.right.value}$. The index of $\func{N.left}$ is $2(2^h + \mathit{l}) = 2^{h+1} + 2\mathit{l}$ and the index of $\func{N.right}$ is $2(2^h + \mathit{l}) + 1 = 2^{h+1} + 2\mathit{l} + 1$. We apply the induction hypothesis on the children of $N$ to obtain
+
+\begin{gather*}
+\func{N.value} = 
+\sum_{j = (2^{k-(h+1)})(2 \mathit{l}) + 1}^{(2^{k-(h+1)})(2 \mathit{l}) + 2^{k-(h+1)}}a_j + 
+\sum_{j = (2^{k-(h+1)})(2 \mathit{l} + 1) + 1}^{(2^{k-(h+1)})(2 \mathit{l} + 1) + 2^{k-(h + 1)}}a_j \\
+= \sum_{j = (2^{k-h}) \mathit{l} + 1}^{(2^{k-h)})\mathit{l} + 2^{k-(h+1)}}a_j + 
+\sum_{j = (2^{k-h})\mathit{l} + 2^{k-h} + 1}^{(2^{k-h}) \mathit{l} + (2^{k-(h + 1)}) + 2^{k-(h + 1)}}a_j \\
+= \sum_{j = (2^{k-h}) \mathit{l} + 1}^{(2^{k-h)})\mathit{l} + 2^{k-(h+1)}}a_j + 
+\sum_{j = (2^{k-h})\mathit{l} + 2^{k-h} + 1}^{(2^{k-h}) \mathit{l} + 2^{k-h}}a_j \\
+= \sum_{j = (2^{k-h})\mathit{l} + 1}^{(2^{k-h})\mathit{l} + 2^{k-h}}a_j
+\end{gather*}
+So the lemma holds. (Whew!)
+\end{proof}
+
+We now list and prove a few loop invariants. Let $k$ be the height of the tree and denote by $b_p, c_p, x_p$ the values of the variables $b,c,x$ after the $p$th iteration of the while loop at line 4. If $i = \sum_{j = 1}^{h}\phi_j 2^j$, then we have
+
+\begin{align*}
+b_p &= \sum_{j = p + 1}^{k}\phi_j 2^j \\
+c_p &=  2^{k-p} \\
+x_p &= \sum_{j=1}^{b_p}a_j .
+\end{align*}
+
+\begin{proof}
+$c_p$: This is easy. $c_0 = n = 2^k$, so the base case holds. Inductively, we have $c_p = c_{p-1} / 2$ = $2^{k-(p-1)} \div 2 = 2^{n-p}$.
+$b_p$: Before the start of the first iteration, $b = b_0 = i$, so the loop invariant holds. Assume that the loop invariant holds on the $p-1$th iteration. There are two cases. If $\lfloor b/c \rfloor = 1$ then $b_p = b_{p-1} - c_{p-1} =  \sum_{j = p}^{k}\phi_j 2^j - 2^{k-(p-1)} = \sum_{j = p - 1}^{k}\phi_j 2^j$. 
+\end{proof}
+
+\begin{lemma}
+After the $p$th iteration of the while loop on line 4, 
+\end{lemma}
 
 
 \end{solution}
@@ -168,9 +385,8 @@ This algorithm is proportional to the height of the tree, and so it runs in $\fu
 
 \part For each $n = 2^k$, and each setting of $a_1, \ldots, a_n$, give an input $i$, $1 \leq i \leq n$, such that your implementation of $\proc{Sum}(i)$ runs in time $\Omega(\log(n))$. Explain clearly and precisely why the running time is $\Omega(\log(n))$ on this input.
 
-
 \begin{solution}
-
+Choose $i = 2^k - 1$. Intuitively, since the binary representation of $i$ is a string of 1s of length $k$, the $\proc{Sum}(i)$ algorithm will need to pick one node from each level of the tree, resulting in a run-time of $\func{O}(k) = \func{\Omega}(\log(n))$.
 \end{solution}
 
 
@@ -229,13 +445,6 @@ $\proc{Union}(H_1,H_2)$ must return a pointer to the root of an $\proc{R-Heap}$ 
 
 \textit{Partial Correctness}
 
-Base case: (0, d) holds for all d, as does (d, 0)
-
-One of the trees is empty, and the other satisfies the R-Heap property. The pointer to the root of the non-empty tree is returned. Vacuously, the condition holds.
-
-Inductive case: want to show (d_1, d_2).
-assume (d_1 -1, d_2)
-
 Assume that the union operation 
 
 \textit{Proof of Termination.}
@@ -258,7 +467,8 @@ base case
 \begin{solution}
 The largest possible height is $n-1$.
 
-Note that in general the largest possible height for a binary tree of $n$ nodes is given by $n-1$: each node in the tree has exactly one child. To construct such a tree which satisfies the $\proc{R-Heap}$ properties, 
+Note that in general the largest possible height for a binary tree of $n$ nodes is given by $n-1$: each node in the tree has exactly one child. To construct such a tree which satisfies the $\proc{R-Heap}$ properties, make all the children the right-children of the tree, and make all key values equal. More formally, if we want to construct $T_n$, take a node $N$ with key 1, and set its right child to $T_{n-1}$. $T_1$ is the tree with a single node with its key set to 1. Then this tree is an $\proc{R-Heap}$ which (trivially) satisfies the min-heap and R-balance properties.
+
 
 
 \end{solution}
