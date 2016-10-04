@@ -495,9 +495,9 @@ Our implementation of $\proc{Union}(H_1,H_2)$ works by recursive comparison, and
 \begin{enumerate}
 \item If one heap is empty, return the root of the non-empty heap.
 \item If not, compare the values of the two roots $r_1$, $r_2$.
-\item Redefine $r_1$ to be the left subtree of the heap with smaller value, and $r_2$ to be the unaltered second tree. Notice that the R-balance property ensures that the left subtree has a d value 1 less than the d of the original tree.
-\item Run the algorithm recursively on $r_1$ and $r_2$. Take the result and add it as the left child of the original parent node.
-\item Fix the d values of the original heap.
+\item Define the variable $small$ to be the node with the smaller value and define the variable $large$ to be the node with the larger value. Recurse the function with the left child of $small$ and the $large$. Assign the returned node to be the new left child of the node $small$. Notice that the R-balance property ensures that the left subtree has a d value 1 less than the d of the original tree.
+\item Fix the d values of the nodes traversed, and swap the left and right childs when necessary, to maintain the R-balance property.
+
 \end{enumerate}
 The algorithm terminates because the d value of either one of $r_1, r_2$ decrements on each recursive call. Eventually, one of the trees being compared will be empty, and the function will return. In the worst case, for instance where $r_1.d$ and $r_2.d$ are decremented in turns, this will take $\func{O}(r_1 .d + r_2 .d)$.
 
@@ -532,6 +532,7 @@ For our formal proof of correctness, we will extend the definition of the d-valu
 % fixing parent
 
 \li $\func{new\_child.parent} \gets \func{small}$
+\li $\func{small.left} \gets \func{new\_child.parent}$
 
 \li \Comment Recalculate d values
 % recalculating d values
@@ -546,8 +547,9 @@ For our formal proof of correctness, we will extend the definition of the d-valu
 \li \If $small.right == NIL$ or $small.right.d < small.left.d$   \Then
 \li     small.left = small.right
 \li     $small.right = \func{new\_child}$
-\li \Else
-\li     small.left = $\func{new\_child}$
+% Not necessary for "else"
+% \li \Else
+% \li     small.left = $\func{new\_child}$
         \End
 
 \li 	\Return $\func{small}$
@@ -579,7 +581,7 @@ $\proc{Union}(H_1, H_2)$ returns a min-heap which contains all the nodes in $H_1
 Base case: One heap is empty. This case is vacuously true -- it just returns the non-empty min-heap!
 Inductive case: Assume, without loss of generality, that $r_1.value \leq r_2.value$, and that $\proc{Union}(r_1.subheap, r_2)$ preserves the min-heap property, where $r_1.subheap$ is any subheap of $r_1$.
 
-Consider $\proc{Union}(r_1, r_2)$. At line 14, the procedure runs $\proc{Union}(r_1.left, r_2)$. By the induction hypothesis, this returns a R-balanced min-heap $\func{new_child}$ containing all the nodes of $r_1.left$ and $r_2$. Now $new_child.value \geq r_1.value$, and $r_1.right.value \geq r_1.value$ by hypothesis. Thus regardless of whether lines 23+24 or line 26 is executed, the children of $r_1$ have values greater than or equal to $r_1.value$. So the min-heap property is preserved.
+Consider $\proc{Union}(r_1, r_2)$. At line 14, the procedure runs $\proc{Union}(r_1.left, r_2)$. By the induction hypothesis, this returns a R-balanced min-heap $\func{new_child}$ containing all the nodes of $r_1.left$ and $r_2$. Now $new_child.value \geq r_1.value$, and $r_1.right.value \geq r_1.value$ by hypothesis. Thus regardless of whether lines 24+25 or line 27 is executed, the children of $r_1$ have values greater than or equal to $r_1.value$. So the min-heap property is preserved.
 
 Notice that when $r_1$ is returned, it has two children: one which was the original right child of $r_1$ (possibly empty), and one which is the union of the other (possibly empty) child of $r_1$, and $r_2$. So the algorithm also returns the pointer to the root of a heap which contains all nodes of the two original heaps, as desired.
 \end{proof}
@@ -589,9 +591,9 @@ $\proc{Union}(H_1, H_2)$ also preserves R-balance and the d-value properties.
 \end{theorem}
 
 \begin{proof}
-This proof is basically an examination of lines 17-20 (d-values) and 22-27 (swap children to preserve R-balance). We'll deal with d-values first. In the base case, one heap is empty, and d-values are preserved vacuously.
+This proof is basically an examination of lines 18-21 (d-values) and 23-28 (swap children to preserve R-balance). We'll deal with d-values first. In the base case, one heap is empty, and d-values are preserved vacuously.
 
-In the inductive case, we consider the call $\proc{Union}(r_1, r_2)$ and assume that $\proc{Union}$ preserves d-values on $r_2$ and subtrees of $r_1$. Then the only d-value which needs to be recalculated is that of $r_1$, denoted by ``smallest'' in the psuedocode. This is dutifully carried out in lines 17-20. 
+In the inductive case, we consider the call $\proc{Union}(r_1, r_2)$ and assume that $\proc{Union}$ preserves d-values on $r_2$ and subtrees of $r_1$. Then the only d-value which needs to be recalculated is that of $r_1$, denoted by ``smallest'' in the psuedocode. This is dutifully carried out in lines 18-21. 
 
 The proof of R-balance preservation follows in exactly the same way.
 \end{proof}
