@@ -126,7 +126,7 @@ Add is simple to implement. The $i$th leaf of the tree is given by index $2^k + 
 
 \begin{codebox}
 \Procname{$\proc{Add}(i,t)$}
-\li $\func{node\_index} \gets 2^k + i$
+\li $\func{node\_index} \gets 2^k + (i - 1)$
 \li \While $\func{node\_index} \neq 0$
 \li \Do $\func{node\_index.value} \gets \func{node\_index.value} + t$
 \li $\func{node\_index} = \proc{Parent}(\func{node\_index})$
@@ -137,7 +137,7 @@ The resultant tree has an updated leaf and satisfies the sum property specified 
 
 $\proc{Add}(i,t)$ runs in $\func{O}(\log(n))$. One iteration of the while loop is executed for each level of the tree, so the algorithm is proportional to the tree height. This in turn is proportional to the log of the number of nodes in the tree, which is proportional to the number of leaves. \\
 
-We may reach the same conclusion by noticing that $\func{node\_index}$ is proportional to $n$ and that it is halved on each iteration when $\proc{Parent}$ is called.
+We may reach the same conclusion by noticing that $\func{node\_index}$ is proportional to $n$ and that it is halved on each iteration when $\proc{Parent}$ is called. It takes $\lfloor \log(n) \rfloor + 1$ iterations of the loop for $\func{node\_index}$ to reach zero.
 \\
 
 $\proc{Sum}(i)$:
@@ -320,7 +320,7 @@ child {node {18}
 \li \Return $x$
 \end{codebox}
 
-Note $\func{value}(d)$ is a function which returns the value of the node with index $d$.\\
+Note $\func{value}(d)$ is a function which returns the value of the node with index $d$. Intuitively, $b$ and $c$ are helper variables that decompose $i$ into a sum of powers of two, while $d$ holds the index of the next node to be visited by the algorithm, and $x$ holds the running sum of nodes visited so far.\\
 
 \textit{Proof of Correctness.}\\
 We will begin by proving a lemma which essentially states that the value held by a node is equal to the sum of the values of its leaf descendants.\\
@@ -344,16 +344,16 @@ So the base case holds. Note $\mathit{l} = 0$ for the first node at depth $h$ in
 
 Fix $\mathit{l}$. By construction,  $\func{value}(d)$ is equal to the sum of the values of its left and right children. The index of the left child is $2(2^h + \mathit{l}) = 2^{h+1} + 2\mathit{l}$ and the index of the right child is $2(2^h + \mathit{l}) + 1 = 2^{h+1} + 2\mathit{l} + 1$. We apply the induction hypothesis on the children of $d$ to obtain
 
-\begin{gather*}
-\func{value}(d) = 
+\begin{align*}
+\func{value}(d) &= 
 \sum_{j = (2^{k-(h+1)})(2 \mathit{l}) + 1}^{(2^{k-(h+1)})(2 \mathit{l}) + 2^{k-(h+1)}}a_j + 
 \sum_{j = (2^{k-(h+1)})(2 \mathit{l} + 1) + 1}^{(2^{k-(h+1)})(2 \mathit{l} + 1) + 2^{k-(h + 1)}}a_j \\
-= \sum_{j = (2^{k-h}) \mathit{l} + 1}^{(2^{k-h)})\mathit{l} + 2^{k-(h+1)}}a_j + 
+&= \sum_{j = (2^{k-h}) \mathit{l} + 1}^{(2^{k-h)})\mathit{l} + 2^{k-(h+1)}}a_j + 
 \sum_{j = (2^{k-h})\mathit{l} + 2^{k-h} + 1}^{(2^{k-h}) \mathit{l} + (2^{k-(h + 1)}) + 2^{k-(h + 1)}}a_j \\
-= \sum_{j = (2^{k-h}) \mathit{l} + 1}^{(2^{k-h)})\mathit{l} + 2^{k-(h+1)}}a_j + 
+&= \sum_{j = (2^{k-h}) \mathit{l} + 1}^{(2^{k-h)})\mathit{l} + 2^{k-(h+1)}}a_j + 
 \sum_{j = (2^{k-h})\mathit{l} + 2^{k-h} + 1}^{(2^{k-h}) \mathit{l} + 2^{k-h}}a_j \\
-= \sum_{j = (2^{k-h})\mathit{l} + 1}^{(2^{k-h})\mathit{l} + 2^{k-h}}a_j
-\end{gather*}
+&= \sum_{j = (2^{k-h})\mathit{l} + 1}^{(2^{k-h})\mathit{l} + 2^{k-h}}a_j
+\end{align*}
 So the lemma holds. Whew!
 \end{proof}
 
@@ -495,7 +495,7 @@ Our implementation of $\proc{Union}(H_1,H_2)$ works by recursive comparison, and
 \begin{enumerate}
 \item If one heap is empty, return the root of the non-empty heap.
 \item If not, compare the values of the two roots $r_1$, $r_2$.
-\item Define the variable $small$ to be the node with the smaller value and define the variable $large$ to be the node with the larger value. Recurse the function with the left child of $small$ and the $large$. Assign the returned node to be the new left child of the node $small$. Notice that the R-balance property ensures that the left subtree has a d value 1 less than the d of the original tree.
+\item Define the variable $small$ to be the node with the smaller value and define the variable $large$ to be the node with the larger value. Recursively execute the function with $large$ and the left child of $small$. Assign the returned node to be the new left child of the node $small$. Notice that the R-balance property ensures that the left subtree has a d value 1 less than the d of the original tree.
 \item Fix the d values of the nodes traversed, and swap the left and right childs when necessary, to maintain the R-balance property.
 
 \end{enumerate}
@@ -532,7 +532,7 @@ For our formal proof of correctness, we will extend the definition of the d-valu
 % fixing parent
 
 \li $\func{new\_child.parent} \gets \func{small}$
-\li $\func{small.left} \gets \func{new\_child.parent}$
+\li $\func{small.left} \gets \func{new\_child}$
 
 \li \Comment Recalculate d values
 % recalculating d values
@@ -543,7 +543,7 @@ For our formal proof of correctness, we will extend the definition of the d-valu
         \End
 
 % R-balance is preserved
-\li \Comment Finish up while preserving R-balance
+\li \Comment Swap to preserve R-balance
 \li \If $small.right == NIL$ or $small.right.d < small.left.d$   \Then
 \li     small.left = small.right
 \li     $small.right = \func{new\_child}$
