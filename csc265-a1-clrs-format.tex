@@ -584,7 +584,7 @@ $\proc{Union}(H_1, H_2)$ returns a min-heap which contains all the nodes in $H_1
 Base case: One heap is empty. This case is vacuously true -- it just returns the non-empty min-heap!
 Inductive case: Assume, without loss of generality, that $r_1.value \leq r_2.value$, and that $\proc{Union}(r_1.subheap, r_2)$ preserves the min-heap property, where $r_1.subheap$ is any subheap of $r_1$.
 
-Consider $\proc{Union}(r_1, r_2)$. At line 14, the procedure runs $\proc{Union}(r_1.left, r_2)$. By the induction hypothesis, this returns a R-balanced min-heap $\func{new_child}$ containing all the nodes of $r_1.left$ and $r_2$. Now $new_child.value \geq r_1.value$, and $r_1.right.value \geq r_1.value$ by hypothesis. Thus regardless of whether lines 24+25 or line 27 is executed, the children of $r_1$ have values greater than or equal to $r_1.value$. So the min-heap property is preserved.
+Consider $\proc{Union}(r_1, r_2)$. At line 14, the procedure runs $\proc{Union}(r_1.left, r_2)$. By the induction hypothesis, this returns a R-balanced min-heap $\func{new_child}$ containing all the nodes of $r_1.left$ and $r_2$. Now $new\_child.value \geq r_1.value$, and $r_1.right.value \geq r_1.value$ by hypothesis. Thus regardless of whether lines 24+25 or line 27 is executed, the children of $r_1$ have values greater than or equal to $r_1.value$. So the min-heap property is preserved.
 
 Notice that when $r_1$ is returned, it has two children: one which was the original right child of $r_1$ (possibly empty), and one which is the union of the other (possibly empty) child of $r_1$, and $r_2$. So the algorithm also returns the pointer to the root of a heap which contains all nodes of the two original heaps, as desired.
 \end{proof}
