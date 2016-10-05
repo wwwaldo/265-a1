@@ -454,16 +454,15 @@ The second step uses the inductive hypothesis, and the final step uses the fact 
 
 \textit{Case 2.} If $\lfloor b_{p-1} / c_{p-1} \rfloor = 0$, then $\phi_{k- (p-1)} = 1$ so that $\psi_{p-1} = \psi_{p-2}$. Then $x_p = x_{p-1} = \sum_{j=1}^{\psi_{p-2}}a_j = \sum_{j=1}^{\psi_{p-1}}a_j$, so the loop invariant holds.
 
-Now we can consider the value of $x$ when the loop terminates. We showed this occurs before the $(k-h+1)$th iteration. Then $\psi_{k-h} = \sum_{\alpha = k-(k-h)}^{k}\phi_{\alpha} = \sum_{\alpha = h}^{k}\phi_{\alpha} = \sum_{\alpha = 1}^{k}\phi_{\alpha}2^{\alpha} = i$ (the last step follows from construction of $h$). But this means $x_{k-h+1} = \sum_{j=1}^{\psi_{(k-h+1)-1}}a_j = \sum_{j=1}^{i}a_j$. So $\proc{Sum}(i)$ is partially correct.
+Now we can consider the value of $x$ when the loop terminates. We showed this occurs before the $(k-h+1)$th iteration. Then $\psi_{k-h} = \sum_{\alpha = k-(k-h)}^{k}\phi_{\alpha}2^{\alpha} = \sum_{\alpha = h}^{k}\phi_{\alpha}2^{\alpha} = \sum_{\alpha = 1}^{k}\phi_{\alpha}2^{\alpha} = i$ (the last step follows from construction of $h$). But this means $x_{k-h+1} = \sum_{j=1}^{\psi_{(k-h+1)-1}}a_j = \sum_{j=1}^{i}a_j$. So $\proc{Sum}(i)$ is partially correct.
  
 \end{proof}
 
-The total correctness of $\proc{Sum}(i)$ follows.\\
+The total correctness of $\proc{Sum}(i)$ follows:\\
 
 \begin{theorem}
-$\proc{Sum}(i)$ is correct.
+$\proc{Sum}(i)$ is correct.\\
 \end{theorem}
-
 \end{solution}
 
 
