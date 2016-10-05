@@ -499,9 +499,8 @@ Our implementation of $\proc{Union}(H_1,H_2)$ works by recursive comparison, and
 \item Finally, return the node $small$, which satisfies all postconditions of \proc{Union}.
 
 \end{enumerate}
-The algorithm terminates because the d value of either one of $r_1, r_2$ decrements on each recursive call. Eventually, one of the trees being compared will be empty, and the function will return. In the worst case, for instance where $r_1.d$ and $r_2.d$ are decremented in turns, this will take $\func{O}(r_1 .d + r_2 .d)$.
 
-For our formal proof of correctness, we will extend the definition of the d-value of a node to be 0 if the node is empty. It is easy to check that this definition is consistent with the other conditions.
+The pseudocode is shown below:
 
 \begin{codebox}
 \Procname{$\proc{Union}(H_1, H_2)$}
@@ -556,7 +555,11 @@ For our formal proof of correctness, we will extend the definition of the d-valu
 	\End
 \end{codebox}
 
-We proceed to prove the correctness of the algorithm. 
+The algorithm terminates because the d value of either one of $r_1, r_2$ decrements on each recursive call. Eventually, one of the trees being compared will be empty, and the function will return. In the worst case, for instance where $r_1.d$ and $r_2.d$ are decremented in turns, this will take $\func{O}(r_1 .d + r_2 .d)$.\\
+
+For our formal proof of correctness, we will extend the definition of the d-value of a node to be 0 if the node is empty. It is easy to check that this definition is consistent with the other conditions.\\
+
+We proceed to prove the correctness of the algorithm. \\
 
 \begin{theorem}
 $\proc{Union}(H_1, H_2)$ terminates, and its worst-case running time is $\func{O}(r_1 .d + r_2 .d)$.
@@ -627,10 +630,10 @@ Now this is all we need. For suppose that $r.d \not \in \func{O}(\log(n))$. Then
 Finally, we assume that $H_n$ is the smallest such R-Heap with d-value $d$. By the lemma $H_n$ must have $2^d - 1$ nodes. Then
 
 \begin{align*}
-d > \log(n) \\
-d \geq \log(n) + 1 \\
-\log(2^d) \geq \log(2^d - 1) + 1 \\
-\log(\frac{2^d}{2^d-1}) \geq 1
+d &> \log(n) \\
+d &\geq \log(n) + 1 \\
+\log(2^d) &\geq \log(2^d - 1) + 1 \\
+\log(\frac{2^d}{2^d-1}) &\geq 1
 \end{align*}
 
 But this is a contradiction, since $\log(\frac{2^d}{2^d-1}) < 1$ for $d > 2$. Thus the theorem holds.
