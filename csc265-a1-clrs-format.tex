@@ -385,7 +385,7 @@ The worst case running time of $\proc{Sum}(i)$ is $\func{O}(\log(n))$.
 \end{corollary}
 
 \begin{proof}
-Choose $i = n - 1 = 2^k -1 = \sum_{j=1}^{k-1}2^j$. Then $h = 1$ and the while loop quits after $k-1$ iterations. But $k \in \func{O}(\log(n))$.
+Choose $i = n - 1 = 2^k -1 = \sum_{j=1}^{k-1}2^j$. Then $h = 1$ and the while loop quits after $k-1$ iterations. Since $k \in \func{O}(\log(n))$, $k-1 \in \func{O}(\log(n))$ and $\proc{Sum}(i)$ runs in $\func{O}(\log(n))$ time.
 \end{proof}
 
 \begin{proposition}
@@ -398,7 +398,7 @@ Again, we begin by proving some loop invariants. We have
 \begin{align*}
 \func{value}(d_p) &= \sum_{j=\psi_{p-1} + 1}^{2^{k-h} + \psi_{p-1}}a_j \\
 x_p &= \sum_{j=1}^{\psi_{p-1}}a_j \\
-\text{where  } \psi_p &= \sum_{\alpha = k-p}^{k}\phi_{\alpha}2^{\alpha}.
+\intertext{where} \psi_p &= \sum_{\alpha = k-p}^{k}\phi_{\alpha}2^{\alpha}.
 \end{align*}
 
 $\func{value}(d_p)$. Base case: before the start of the loop, $\func{value}(d_0) = \func{value}(2^0)= \sum_{j = 1}^{2^{k}}a_j$ by the lemma. We have $\psi_{-1} = 0$, so the theorem holds. 
