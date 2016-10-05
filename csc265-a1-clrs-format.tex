@@ -494,8 +494,9 @@ Our implementation of $\proc{Union}(H_1,H_2)$ works by recursive comparison, and
 \begin{enumerate}
 \item If one heap is empty, return the root of the non-empty heap.
 \item If not, compare the values of the two roots $r_1$, $r_2$.
-\item Define the variable $small$ to be the node with the smaller value and define the variable $large$ to be the node with the larger value. Recursively execute the function with $large$ and the left child of $small$. Assign the returned node to be the new left child of the node $small$. Notice that the R-balance property ensures that the left subtree has a d value 1 less than the d of the original tree.
-\item Fix the d values of the nodes traversed, and swap the left and right childs when necessary, to maintain the R-balance property.
+\item Define the variable $small$ to be the node with the smaller value and define the variable $large$ to be the node with the larger value. Recursively execute the function with $large$ and the left child of $small$. Assign the returned node to be the new left child of the node $small$ as well as fix the parent of the child. Notice that the R-balance property ensures that the left subtree has a d value 1 less than the d of the original tree.
+\item Fix the d values of the node $small$, and swap the left and right childs when necessary, to maintain the R-balance property.
+\item Finally, return the node $small$, which satisfies all postconditions of \proc{Union}.
 
 \end{enumerate}
 The algorithm terminates because the d value of either one of $r_1, r_2$ decrements on each recursive call. Eventually, one of the trees being compared will be empty, and the function will return. In the worst case, for instance where $r_1.d$ and $r_2.d$ are decremented in turns, this will take $\func{O}(r_1 .d + r_2 .d)$.
